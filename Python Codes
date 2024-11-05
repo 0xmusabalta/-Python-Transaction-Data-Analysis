@@ -1,0 +1,49 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+def load_data(file_path):
+    """Load banking transaction data from a CSV file."""
+    df = pd.read_csv(file_path)
+    return df
+
+def clean_data(df):
+    """Clean the banking transaction DataFrame."""
+    df['Date'] = pd.to_datetime(df['Date'])
+    df.dropna(inplace=True)
+    return df
+
+def plot_transactions_by_type(df):
+    """Plot transactions by type (Deposit/Withdrawal)."""
+    plt.figure(figsize=(10, 6))
+    sns.countplot(data=df, x='TransactionType', palette='Set2')
+    plt.title('Transaction Count by Type')
+    plt.xlabel('Transaction Type')
+    plt.ylabel('Count')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+
+def plot_daily_transaction_amounts(df):
+    """Plot daily transaction amounts."""
+    df['Date'] = df['Date'].dt.date
+    daily_amounts = df.groupby('Date').agg({'Amount': 'sum'}).reset_index()
+    plt.figure(figsize=(10, 6))
+    sns.lineplot(data=daily_amounts, x='Date', y='Amount', marker='o')
+    plt.title('Daily Transaction Amounts')
+    plt.xlabel('Date')
+    plt.ylabel('Total Amount ($)')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+
+def main():
+    data_file = 'banking_transactions.csv'
+    df = load_data(data_file)
+    df = clean_data(df)
+    print(df.head())
+    plot_transactions_by_type(df)
+    plot_daily_transaction_amounts(df)
+
+if __name__ == "__main__":
+    main()
